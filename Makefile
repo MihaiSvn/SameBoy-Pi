@@ -223,6 +223,9 @@ endif
 ifeq (,$(PKG_CONFIG))
 ifneq ($(PLATFORM),windows32)
 SDL_CFLAGS := $(shell sdl2-config --cflags)
+ifneq ($(RPI),)
+SDL_CFLAGS += -D_RASPBERRY_PI
+endif
 SDL_LDFLAGS := $(shell sdl2-config --libs) -lpthread
 endif
 ifeq ($(PLATFORM),Darwin)
@@ -242,6 +245,9 @@ SDL_AUDIO_DRIVERS += openal
 endif
 else # ifneq ($(PKG_CONFIG),)
 SDL_CFLAGS := $(shell $(PKG_CONFIG) --cflags sdl2)
+ifneq ($(RPI),)
+SDL_CFLAGS += -D_RASPBERRY_PI
+endif
 SDL_LDFLAGS := $(shell $(PKG_CONFIG) --libs sdl2) -lpthread
 
 # Allow OpenAL to be disabled even if the development libraries are available
