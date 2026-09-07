@@ -72,4 +72,6 @@ SameBoy is compiled and tested on macOS, Ubuntu and 64-bit Windows 10.
 
 ### To run Raspberry Pi Mode
 
-To compile project for the Raspberry Pi fork, you must run `make sdl RPI=1`
+To compile project for the Raspberry Pi fork, you must run `make sdl RPI=1`, then run the daemon that listens for the GPIO buttons.
+
+Alternatively, you can run `chmod +x run_console.sh`

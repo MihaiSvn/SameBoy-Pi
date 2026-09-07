@@ -48,8 +48,10 @@ static unsigned battery_timer = 0;
 
 int fifo_fd = -1;
 void init_raspberry_fifo(void){
-    mkfifo("/tmp/btn_input_fifo",0666);
-    fifo_fd = open("/tmp/btn_input_fifo",O_RDONLY | O_NONBLOCK);
+    fifo_fd = open("/tmp/btn_input_fifo", O_RDONLY | O_NONBLOCK);
+    if (fifo_fd == -1) {
+        printf("Hardware buttons FIFO not found. Running in standard mode.\n");
+    }
 }
 
 void read_fifo_inputs(GB_gameboy_t *gb){
