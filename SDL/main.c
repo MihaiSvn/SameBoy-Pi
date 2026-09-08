@@ -54,36 +54,30 @@ void init_raspberry_fifo(void){
     }
 }
 
-void read_fifo_inputs(){
+void read_fifo_inputs(GB_gameboy_t *gb){
     if(fifo_fd<0) return;
 
     char ch;
     while(read(fifo_fd,&ch,1)>0){
-        SDL_Event event;
-        memset(&event, 0, sizeof(event));
-
-        bool is_pressed = (ch>='A' && ch<='Z');
-
-        event.type = is_pressed ? SDL_KEYDOWN : SDL_KEYUP;
-        event.key.state = is_pressed ? SDL_PRESSED : SDL_RELEASED;
-        event.key.repeat = 0;
-
-        SDL_Keycode mapped_key = SDLK_UNKNOWN;
-
-        switch (ch) {
-            case 'U': case 'u': mapped_key = SDLK_UP; break;
-            case 'D': case 'd': mapped_key = SDLK_DOWN; break;
-            case 'L': case 'l': mapped_key = SDLK_LEFT; break;
-            case 'R': case 'r': mapped_key = SDLK_RIGHT; break;
-            case 'A': case 'a': mapped_key = SDLK_x; break; // A = X key
-            case 'B': case 'b': mapped_key = SDLK_z; break; // B = Z key
-            case 'S': case 's': mapped_key = SDLK_RETURN; break; // Start = Enter
-            case 'E': case 'e': mapped_key = SDLK_BACKSPACE; break; // Select = Backspace
-        }
-
-        if(mapped_key != SDLK_UNKNOWN){
-            event.key.keysym.sym = mapped_key;
-            SDL_PushEvent(&event);
+        switch (ch)
+        {
+            case 'U': GB_set_key_state(gb, GB_KEY_UP, true); break;
+            case 'u': GB_set_key_state(gb, GB_KEY_UP, false); break;
+            case 'D': GB_set_key_state(gb, GB_KEY_DOWN, true); break;
+            case 'd': GB_set_key_state(gb, GB_KEY_DOWN, false); break;
+            case 'L': GB_set_key_state(gb, GB_KEY_LEFT, true); break;
+            case 'l': GB_set_key_state(gb, GB_KEY_LEFT, false); break;
+            case 'R': GB_set_key_state(gb, GB_KEY_RIGHT, true); break;
+            case 'r': GB_set_key_state(gb, GB_KEY_RIGHT, false); break;
+            case 'A': GB_set_key_state(gb, GB_KEY_A, true); break;
+            case 'a': GB_set_key_state(gb, GB_KEY_A, false); break;
+            case 'B': GB_set_key_state(gb, GB_KEY_B, true); break;
+            case 'b': GB_set_key_state(gb, GB_KEY_B, false); break;
+            case 'S': GB_set_key_state(gb, GB_KEY_START, true); break;
+            case 's': GB_set_key_state(gb, GB_KEY_START, false); break;
+            case 'E': GB_set_key_state(gb, GB_KEY_SELECT, true); break;
+            case 'e': GB_set_key_state(gb, GB_KEY_SELECT, false); break;
+            default: break;
         }
     }
 }
@@ -389,7 +383,7 @@ static void handle_events(GB_gameboy_t *gb)
 {
     SDL_Event event;
     #ifdef _RASPBERRY_PI
-        read_fifo_inputs();
+        read_fifo_inputs(gb);
     #endif
     while (SDL_PollEvent(&event)) {
         switch (event.type) {
