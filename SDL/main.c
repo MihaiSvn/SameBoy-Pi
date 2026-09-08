@@ -40,6 +40,50 @@ static bool console_supported = false;
 static bool battery_dirty = false;
 static unsigned battery_timer = 0;
 
+#ifdef _RASPBERRY_PI
+
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/stat.h>
+
+int fifo_fd = -1;
+void init_raspberry_fifo(void){
+    fifo_fd = open("/tmp/btn_input_fifo", O_RDONLY | O_NONBLOCK);
+    if (fifo_fd == -1) {
+        printf("Hardware buttons FIFO not found. Running in standard mode.\n");
+    }
+}
+
+void read_fifo_inputs(GB_gameboy_t *gb){
+    if(fifo_fd<0) return;
+
+    char ch;
+    while(read(fifo_fd,&ch,1)>0){
+        switch (ch)
+        {
+            case 'U': GB_set_key_state(gb, GB_KEY_UP, true); break;
+            case 'u': GB_set_key_state(gb, GB_KEY_UP, false); break;
+            case 'D': GB_set_key_state(gb, GB_KEY_DOWN, true); break;
+            case 'd': GB_set_key_state(gb, GB_KEY_DOWN, false); break;
+            case 'L': GB_set_key_state(gb, GB_KEY_LEFT, true); break;
+            case 'l': GB_set_key_state(gb, GB_KEY_LEFT, false); break;
+            case 'R': GB_set_key_state(gb, GB_KEY_RIGHT, true); break;
+            case 'r': GB_set_key_state(gb, GB_KEY_RIGHT, false); break;
+            case 'A': GB_set_key_state(gb, GB_KEY_A, true); break;
+            case 'a': GB_set_key_state(gb, GB_KEY_A, false); break;
+            case 'B': GB_set_key_state(gb, GB_KEY_B, true); break;
+            case 'b': GB_set_key_state(gb, GB_KEY_B, false); break;
+            case 'S': GB_set_key_state(gb, GB_KEY_START, true); break;
+            case 's': GB_set_key_state(gb, GB_KEY_START, false); break;
+            case 'E': GB_set_key_state(gb, GB_KEY_SELECT, true); break;
+            case 'e': GB_set_key_state(gb, GB_KEY_SELECT, false); break;
+            default: break;
+        }
+    }
+}
+
+#endif
+
 bool uses_gl(void)
 {
     return gl_context;
@@ -338,6 +382,9 @@ static void save_screenshot(void)
 static void handle_events(GB_gameboy_t *gb)
 {
     SDL_Event event;
+    #ifdef _RASPBERRY_PI
+        read_fifo_inputs(gb);
+    #endif
     while (SDL_PollEvent(&event)) {
         switch (event.type) {
             case SDL_DISPLAYEVENT:
@@ -1447,6 +1494,10 @@ int main(int argc, char **argv)
 #endif
 #ifdef __APPLE__
     enable_smooth_scrolling();
+#endif
+
+#ifdef _RASPBERRY_PI
+    init_raspberry_fifo();
 #endif
 
     const char *model_string = get_arg_option("--model", &argc, argv);

@@ -69,3 +69,9 @@ The SDL port will look for resource files with a path relative to executable and
 Linux, BSD, and other FreeDesktop users can run `sudo make install` to install SameBoy as both a GUI app and a command line tool.
 
 SameBoy is compiled and tested on macOS, Ubuntu and 64-bit Windows 10.
+
+### To run Raspberry Pi Mode
+
+To compile project for the Raspberry Pi fork, you must run `make sdl RPI=1`, then run the daemon that listens for the GPIO buttons.
+
+Alternatively, you can run `chmod +x run_console.sh`, and then `./run_console.sh` or `./run_console.sh game.gb` if you want to start up a game directly.
