@@ -75,3 +75,23 @@ SameBoy is compiled and tested on macOS, Ubuntu and 64-bit Windows 10.
 To compile project for the Raspberry Pi fork, you must run `make sdl RPI=1`, then run the daemon that listens for the GPIO buttons.
 
 Alternatively, you can run `chmod +x run_console.sh`, and then `./run_console.sh` or `./run_console.sh game.gb` if you want to start up a game directly.
+
+**GPIO Pin Mapping (BCM Numbering)**
+
+**System Controls**
+* Power Button: GPIO 3
+
+**D-Pad**
+* Up Arrow: GPIO 20
+* Down Arrow: GPIO 16
+* Left Arrow: GPIO 21
+* Right Arrow: GPIO 12
+
+**Action & Menu Buttons**
+* Button B (Left): GPIO 13
+* Button A (Right): GPIO 6
+
+* Select Button (Left): GPIO 26
+* Start Button (Right): GPIO 19
+
+*Note: The hardware pinout documented here must always stay synchronized with the macro definitions in `GPIO/console_config.h`.*
